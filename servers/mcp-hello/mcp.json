@@ -1,0 +1,15 @@
+{
+  "name": "mcp-hello",
+  "executable": "python",
+  "args": ["servers/mcp-hello/src/server.py"],
+  "tools": [
+    {
+      "name": "echo",
+      "description": "Echoes back the given text with metadata"
+    },
+    {
+      "name": "health",
+      "description": "Checks server status and version"
+    }
+  ]
+}
