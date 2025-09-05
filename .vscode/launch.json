@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run Hello MCP Server",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/servers/mcp-hello/src/server.py",
+      "envFile": "${workspaceFolder}/.env",
+      "console": "integratedTerminal"
+    }
+  ]
+}

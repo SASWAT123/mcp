@@ -1,0 +1,9 @@
+{
+  "name": "mcp",
+  "image": "mcr.microsoft.com/devcontainers/python:3.12",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": { "version": "20" }
+  },
+  "postCreateCommand": ".devcontainer/post-create.sh",
+  "remoteEnv": { "OPENAI_API_KEY": "${localEnv:OPENAI_API_KEY}" }
+}
