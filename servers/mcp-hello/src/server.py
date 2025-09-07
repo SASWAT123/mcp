@@ -1,43 +1,41 @@
 from __future__ import annotations
-import json
-import sys
+import asyncio
+import os
 import time
 import uuid
 from typing import Any, Dict
 
+from mcp.server.fastmcp import FastMCP, Context
 
-# Tool: echo
-def echo(text: str) -> Dict[str, Any]:
-    """Echo back text with timestamp + request ID"""
+app = FastMCP("mcp-hello")
+
+@app.tool()
+async def echo(text: str) -> Dict[str, Any]:
+    """
+    Echo the given text back with metadata.
+    """
     return {
         "text": text,
         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-        "request_id": str(uuid.uuid4())
+        "request_id": str(uuid.uuid4()),
     }
 
+@app.tool()
+async def health() -> Dict[str, str]:
+    """
+    Basic server health.
+    """
+    return {"status": "ok", "version": os.getenv("MCP_HELLO_VERSION", "0.1.0")}
 
-# Tool: health
-def health() -> Dict[str, str]:
-    """Return server health info"""
-    return {"status": "ok", "version": "0.1.0"}
-
-
-# Very simple MCP-like harness (simulate request/response)
-def main():
-    if len(sys.argv) < 2:
-        print("Usage: server.py [tool] [args...]")
-        sys.exit(1)
-
-    tool = sys.argv[1]
-
-    if tool == "echo":
-        text = " ".join(sys.argv[2:]) if len(sys.argv) > 2 else ""
-        print(json.dumps(echo(text)))
-    elif tool == "health":
-        print(json.dumps(health()))
-    else:
-        sys.exit(f"Unknown tool: {tool}")
-
+# Optional: show how to use per-call context (logging, tracing, auth etc.)
+@app.tool()
+async def whoami(ctx: Context) -> Dict[str, str]:
+    """
+    Returns connection metadata from the MCP context (if provided by client).
+    """
+    return {"client": ctx.client or "unknown"}
 
 if __name__ == "__main__":
-    main()
+    # Start a stdio server so MCP clients can launch us as a subprocess.
+    # You can also expose SSE/HTTP transports; stdio is the most universal.
+    asyncio.run(app.run_stdio_async())
